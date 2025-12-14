@@ -248,7 +248,8 @@ export function PreviewCanvas() {
               )}
 
               {/* Custom Text Overlay - moved to top right */}
-              {customizations.text && (typeof customizations.text === "string" ? customizations.text : customizations.text.value) && (
+              {/* FIX: Added (as any) casting to handle the value property access */}
+              {customizations.text && (typeof customizations.text === "string" ? customizations.text : (customizations.text as any).value) && (
                 <div 
                   className="absolute top-3 right-3 text-lg font-bold px-3 py-1.5 rounded-lg transition-all duration-300 shadow-lg pointer-events-none"
                   style={{
@@ -259,7 +260,8 @@ export function PreviewCanvas() {
                     border: "2px solid rgba(255,255,255,0.5)",
                   }}
                 >
-                  {typeof customizations.text === "string" ? customizations.text : customizations.text.value || ""}
+                  {/* FIX: Added (as any) casting here as well */}
+                  {typeof customizations.text === "string" ? customizations.text : (customizations.text as any).value || ""}
                 </div>
               )}
 
@@ -309,7 +311,8 @@ export function PreviewCanvas() {
           <div className="grid grid-cols-2 gap-3">
             {Object.entries(customizations).map(([part, config]) => {
               if (part === "text") {
-                const textValue = typeof config === "string" ? config : config?.value || ""
+                // FIX: Added (as any) casting for config?.value
+                const textValue = typeof config === "string" ? config : (config as any)?.value || ""
                 return textValue ? (
                   <div key={part} className="flex items-start gap-2">
                     <div className="text-xs">

@@ -19,8 +19,8 @@ export interface Customization {
   [key: string]: {
     color?: string
     material?: string
-  }
-  text?: string
+    value?: string // Added this to support text customization
+  } | undefined
 }
 
 export interface Design {
