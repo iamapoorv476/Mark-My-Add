@@ -18,6 +18,8 @@ const MOCK_USERS = [
    AUTH STORE (FIXED)
 ========================= */
 
+
+  
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
@@ -27,29 +29,24 @@ export const useAuthStore = create<AuthState>()(
 
       setHasHydrated: () => set({ hasHydrated: true }),
 
-      login: async (email: string, password: string) => {
+      login: async (email, password) => {
         const user = MOCK_USERS.find(
           (u) => u.email === email && u.password === password
         )
-        if (!user) throw new Error("Invalid email or password")
+        if (!user) throw new Error("Invalid credentials")
 
-        const token = btoa(`${user.id}:${Date.now()}`)
-        set({ user, token })
+        set({
+          user,
+          token: btoa(`${user.id}:${Date.now()}`),
+        })
       },
 
-      signup: async (email: string, password: string) => {
-        const existingUser = MOCK_USERS.find((u) => u.email === email)
-        if (existingUser) throw new Error("User already exists")
-
-        const newUser = {
-          id: `user-${Date.now()}`,
-          email,
-          password,
-        }
-
-        MOCK_USERS.push(newUser)
-        const token = btoa(`${newUser.id}:${Date.now()}`)
-        set({ user: newUser, token })
+      signup: async (email, password) => {
+        const user = { id: `user-${Date.now()}`, email, password }
+        set({
+          user,
+          token: btoa(`${user.id}:${Date.now()}`),
+        })
       },
 
       logout: () => set({ user: null, token: null }),
@@ -64,6 +61,7 @@ export const useAuthStore = create<AuthState>()(
     }
   )
 )
+
 
 /* =========================
    CUSTOMIZER STORE (UNCHANGED)

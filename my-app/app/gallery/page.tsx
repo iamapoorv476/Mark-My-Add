@@ -10,8 +10,9 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 
 export default function GalleryPage() {
-  const router = useRouter()
+  
   const { user, token,hasHydrated } = useAuthStore()
+  const router = useRouter()
 
   const designs = useGalleryStore((state) => state.designs)
 
@@ -22,12 +23,15 @@ export default function GalleryPage() {
   // Fix hydration - only render after mount
   
  useEffect(() => {
-    if (!hasHydrated) return
-    if (!token || !user) router.replace("/")
-  }, [hasHydrated, token, user, router])
+  if (!hasHydrated) return
+  if (!token || !user) {
+    router.replace("/")
+  }
+}, [hasHydrated, token, user])
 
-  // Don't render until mounted (prevents hydration mismatch)
- if (!hasHydrated) return null
+if (!hasHydrated) {
+  return null // ← THIS LINE IS CRITICAL
+}
 
 
   // Show loading while checking auth

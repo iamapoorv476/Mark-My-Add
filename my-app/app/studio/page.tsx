@@ -10,20 +10,23 @@ import { PreviewCanvas } from "@/components/preview-canvas"
 import { AISuggestions } from "@/components/ai-suggestions"
 
 export default function StudioPage() {
-  const router = useRouter()
+  
   const { user, token,hasHydrated } = useAuthStore()
+  const router = useRouter()
 
    
 
 
    useEffect(() => {
-    if (!hasHydrated) return
-    if (!token || !user) router.replace("/")
-  }, [hasHydrated, token, user, router])
+  if (!hasHydrated) return
+  if (!token || !user) {
+    router.replace("/")
+  }
+}, [hasHydrated, token, user])
 
-
-  // Don't render until mounted (prevents hydration mismatch)
-  if (!hasHydrated) return null
+if (!hasHydrated) {
+  return null // ← THIS LINE IS CRITICAL
+}
 
 
   return (
