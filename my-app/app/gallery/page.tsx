@@ -16,19 +16,39 @@ export default function GalleryPage() {
 
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [mounted, setMounted] = useState(false)
 
+  // Fix hydration - only render after mount
   useEffect(() => {
-    if (!isAuthenticated()) {
+    setMounted(true)
+  }, [])
+
+  // Check authentication after mount
+  useEffect(() => {
+    if (mounted && !isAuthenticated()) {
       router.push("/")
     }
-  }, [isAuthenticated, router])
+  }, [mounted, isAuthenticated, router])
 
-  if (!isAuthenticated()) {
+  // Don't render until mounted (prevents hydration mismatch)
+  if (!mounted) {
     return null
   }
 
+  // Show loading while checking auth
+  if (!isAuthenticated() || !user) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading gallery...</p>
+        </div>
+      </div>
+    )
+  }
+
   // Filter designs for current user
-  const userDesigns = designs.filter((d) => d.userId === user?.id)
+  const userDesigns = designs.filter((d) => d.userId === user.id)
 
   // Get all unique tags
   const allTags = Array.from(new Set(userDesigns.flatMap((d) => d.tags)))

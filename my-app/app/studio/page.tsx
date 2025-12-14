@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect,useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuthStore } from "@/lib/store"
 import { StudioHeader } from "@/components/studio-header"
@@ -11,15 +11,26 @@ import { AISuggestions } from "@/components/ai-suggestions"
 
 export default function StudioPage() {
   const router = useRouter()
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+  const { user } = useAuthStore()
+   const [mounted, setMounted] = useState(false)
+   useEffect(() => {
+    setMounted(true)
+  }, [])
 
+
+   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Check authentication
   useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push("/")
+    if (mounted && !user) {
+      router.push("/login")
     }
-  }, [isAuthenticated, router])
+  }, [mounted, user, router])
 
-  if (!isAuthenticated()) {
+  // Don't render until mounted (prevents hydration mismatch)
+  if (!mounted) {
     return null
   }
 
