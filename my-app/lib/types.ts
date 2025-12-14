@@ -36,6 +36,7 @@ export interface Design {
 export interface AuthState {
   user: User | null
   token: string | null
+  hasHydrated: boolean
   login: (email: string, password: string) => Promise<void>
   signup: (email: string, password: string) => Promise<void>
   logout: () => void

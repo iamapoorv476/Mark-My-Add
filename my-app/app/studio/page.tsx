@@ -11,7 +11,7 @@ import { AISuggestions } from "@/components/ai-suggestions"
 
 export default function StudioPage() {
   const router = useRouter()
-  const { user, token } = useAuthStore()
+  const { user, token,hasHydrated } = useAuthStore()
 
    const [mounted, setMounted] = useState(false)
    
@@ -23,17 +23,16 @@ export default function StudioPage() {
 
   // Check authentication
   useEffect(() => {
-  if (!mounted) return
+  if (!hasHydrated) return
   if (!token || !user) {
     router.push("/")
   }
-}, [mounted, token, user, router])
+}, [hasHydrated, token, user])
 
 
   // Don't render until mounted (prevents hydration mismatch)
-  if (!mounted) {
-    return null
-  }
+  if (!hasHydrated) return null
+
 
   return (
     <div className="min-h-screen bg-background">
