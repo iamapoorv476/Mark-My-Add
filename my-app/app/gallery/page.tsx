@@ -11,7 +11,8 @@ import { Plus } from "lucide-react"
 
 export default function GalleryPage() {
   const router = useRouter()
-  const { isAuthenticated, user } = useAuthStore()
+  const { user, token } = useAuthStore()
+
   const designs = useGalleryStore((state) => state.designs)
 
   const [searchTerm, setSearchTerm] = useState("")
@@ -25,10 +26,11 @@ export default function GalleryPage() {
 
   // Check authentication after mount
   useEffect(() => {
-    if (mounted && !isAuthenticated()) {
-      router.push("/")
-    }
-  }, [mounted, isAuthenticated, router])
+  if (!mounted) return
+  if (!token || !user) {
+    router.push("/")
+  }
+}, [mounted, token, user, router])
 
   // Don't render until mounted (prevents hydration mismatch)
   if (!mounted) {
@@ -36,7 +38,8 @@ export default function GalleryPage() {
   }
 
   // Show loading while checking auth
-  if (!isAuthenticated() || !user) {
+  if (!token || !user) {
+
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">

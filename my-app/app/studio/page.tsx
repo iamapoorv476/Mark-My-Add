@@ -11,11 +11,10 @@ import { AISuggestions } from "@/components/ai-suggestions"
 
 export default function StudioPage() {
   const router = useRouter()
-  const { user } = useAuthStore()
+  const { user, token } = useAuthStore()
+
    const [mounted, setMounted] = useState(false)
-   useEffect(() => {
-    setMounted(true)
-  }, [])
+   
 
 
    useEffect(() => {
@@ -24,10 +23,12 @@ export default function StudioPage() {
 
   // Check authentication
   useEffect(() => {
-    if (mounted && !user) {
-      router.push("/login")
-    }
-  }, [mounted, user, router])
+  if (!mounted) return
+  if (!token || !user) {
+    router.push("/")
+  }
+}, [mounted, token, user, router])
+
 
   // Don't render until mounted (prevents hydration mismatch)
   if (!mounted) {
