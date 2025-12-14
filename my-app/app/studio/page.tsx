@@ -1,0 +1,45 @@
+"use client"
+
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { useAuthStore } from "@/lib/store"
+import { StudioHeader } from "@/components/studio-header"
+import { ProductSelector } from "@/components/product-selector"
+import { CustomizationPanel } from "@/components/customization-panel"
+import { PreviewCanvas } from "@/components/preview-canvas"
+import { AISuggestions } from "@/components/ai-suggestions"
+
+export default function StudioPage() {
+  const router = useRouter()
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.push("/")
+    }
+  }, [isAuthenticated, router])
+
+  if (!isAuthenticated()) {
+    return null
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <StudioHeader />
+      <main className="container mx-auto px-4 py-8">
+        <div className="grid lg:grid-cols-[300px_1fr_400px] gap-6">
+          <div className="space-y-6">
+            <ProductSelector />
+            <AISuggestions />
+          </div>
+          <div className="space-y-6">
+            <PreviewCanvas />
+          </div>
+          <div className="space-y-6">
+            <CustomizationPanel />
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+}
