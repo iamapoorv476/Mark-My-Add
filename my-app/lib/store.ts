@@ -78,29 +78,44 @@ export const useCustomizerStore = create<CustomizerState>((set) => ({
 // Gallery store
 interface GalleryState {
   designs: Design[]
+  editingDesignId: string | null
+  startEditing: (id: string) => void
+  clearEditing: () => void
   addDesign: (design: Design) => void
   updateDesign: (id: string, design: Partial<Design>) => void
   deleteDesign: (id: string) => void
   getDesignById: (id: string) => Design | undefined
 }
 
+
 export const useGalleryStore = create<GalleryState>()(
   persist(
     (set, get) => ({
       designs: [],
-      addDesign: (design) => set((state) => ({ designs: [...state.designs, design] })),
+      editingDesignId: null,
+
+      startEditing: (id) => set({ editingDesignId: id }),
+      clearEditing: () => set({ editingDesignId: null }),
+
+      addDesign: (design) =>
+        set((state) => ({ designs: [...state.designs, design] })),
+
       updateDesign: (id, updates) =>
         set((state) => ({
-          designs: state.designs.map((d) => (d.id === id ? { ...d, ...updates } : d)),
+          designs: state.designs.map((d) =>
+            d.id === id ? { ...d, ...updates } : d
+          ),
         })),
+
       deleteDesign: (id) =>
         set((state) => ({
           designs: state.designs.filter((d) => d.id !== id),
         })),
+
       getDesignById: (id) => get().designs.find((d) => d.id === id),
     }),
-    {
-      name: "gallery-storage",
-    },
-  ),
+    { name: "gallery-storage" }
+  )
 )
+
+

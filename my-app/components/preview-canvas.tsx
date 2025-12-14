@@ -12,7 +12,9 @@ import { useRouter } from "next/navigation"
 export function PreviewCanvas() {
   const router = useRouter()
   const { selectedProduct, customizations } = useCustomizerStore()
-  const { addDesign } = useGalleryStore()
+  const { addDesign, updateDesign, editingDesignId, clearEditing } = useGalleryStore()
+
+
   const { user } = useAuthStore()
   
   // Zoom and Pan state
@@ -25,21 +27,32 @@ export function PreviewCanvas() {
   const product = MOCK_PRODUCTS.find((p) => p.id === selectedProduct)
 
   const handleSave = () => {
-    if (!product || !user) return
+  if (!product || !user) return
 
-    const design = {
+  const payload = {
+    productId: product.id,
+    customizations,
+    previewImage: product.baseImage,
+    tags: [product.name.toLowerCase().replace(/\s+/g, "-")],
+    created_at: new Date().toISOString(),
+  }
+
+  if (editingDesignId) {
+    // UPDATE existing design
+    updateDesign(editingDesignId, payload)
+    clearEditing()
+
+  } else {
+    // CREATE new design
+    addDesign({
       id: `design-${Date.now()}`,
       userId: user.id,
-      productId: product.id,
-      customizations,
-      previewImage: product.baseImage,
-      tags: [product.name.toLowerCase().replace(/\s+/g, "-")],
-      created_at: new Date().toISOString(),
-    }
-
-    addDesign(design)
-    router.push("/gallery")
+      ...payload,
+    })
   }
+
+  router.push("/gallery")
+}
 
   const handleDownload = () => {
     alert("High-resolution export feature coming soon!")
