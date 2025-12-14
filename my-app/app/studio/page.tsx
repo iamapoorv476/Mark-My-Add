@@ -13,21 +13,13 @@ export default function StudioPage() {
   const router = useRouter()
   const { user, token,hasHydrated } = useAuthStore()
 
-   const [mounted, setMounted] = useState(false)
    
 
 
    useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  // Check authentication
-  useEffect(() => {
-  if (!hasHydrated) return
-  if (!token || !user) {
-    router.push("/")
-  }
-}, [hasHydrated, token, user])
+    if (!hasHydrated) return
+    if (!token || !user) router.replace("/")
+  }, [hasHydrated, token, user, router])
 
 
   // Don't render until mounted (prevents hydration mismatch)

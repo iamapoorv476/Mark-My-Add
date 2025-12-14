@@ -25,13 +25,13 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       hasHydrated: false,
 
+      setHasHydrated: () => set({ hasHydrated: true }),
+
       login: async (email: string, password: string) => {
         const user = MOCK_USERS.find(
           (u) => u.email === email && u.password === password
         )
-        if (!user) {
-          throw new Error("Invalid email or password")
-        }
+        if (!user) throw new Error("Invalid email or password")
 
         const token = btoa(`${user.id}:${Date.now()}`)
         set({ user, token })
@@ -39,9 +39,7 @@ export const useAuthStore = create<AuthState>()(
 
       signup: async (email: string, password: string) => {
         const existingUser = MOCK_USERS.find((u) => u.email === email)
-        if (existingUser) {
-          throw new Error("User already exists")
-        }
+        if (existingUser) throw new Error("User already exists")
 
         const newUser = {
           id: `user-${Date.now()}`,
@@ -54,27 +52,21 @@ export const useAuthStore = create<AuthState>()(
         set({ user: newUser, token })
       },
 
-      logout: () => {
-        set({ user: null, token: null })
-      },
+      logout: () => set({ user: null, token: null }),
 
-      isAuthenticated: () => {
-        return !!get().token
-      },
+      isAuthenticated: () => !!get().token,
     }),
     {
       name: "auth-storage",
       onRehydrateStorage: () => (state) => {
-        if (state) {
-          state.hasHydrated = true
-        }
+        state?.setHasHydrated()
       },
     }
   )
 )
 
 /* =========================
-   CUSTOMIZER STORE
+   CUSTOMIZER STORE (UNCHANGED)
 ========================= */
 
 interface CustomizerState {
@@ -107,7 +99,7 @@ export const useCustomizerStore = create<CustomizerState>((set) => ({
 }))
 
 /* =========================
-   GALLERY STORE
+   GALLERY STORE (UNCHANGED)
 ========================= */
 
 interface GalleryState {
@@ -131,9 +123,7 @@ export const useGalleryStore = create<GalleryState>()(
       clearEditing: () => set({ editingDesignId: null }),
 
       addDesign: (design) =>
-        set((state) => ({
-          designs: [...state.designs, design],
-        })),
+        set((state) => ({ designs: [...state.designs, design] })),
 
       updateDesign: (id, updates) =>
         set((state) => ({
@@ -149,8 +139,6 @@ export const useGalleryStore = create<GalleryState>()(
 
       getDesignById: (id) => get().designs.find((d) => d.id === id),
     }),
-    {
-      name: "gallery-storage",
-    }
+    { name: "gallery-storage" }
   )
 )

@@ -17,20 +17,14 @@ export default function GalleryPage() {
 
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedTags, setSelectedTags] = useState<string[]>([])
-  const [mounted, setMounted] = useState(false)
+  
 
   // Fix hydration - only render after mount
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  // Check authentication after mount
+  
  useEffect(() => {
-  if (!hasHydrated) return
-  if (!token || !user) {
-    router.push("/")
-  }
-}, [hasHydrated, token, user])
+    if (!hasHydrated) return
+    if (!token || !user) router.replace("/")
+  }, [hasHydrated, token, user, router])
 
   // Don't render until mounted (prevents hydration mismatch)
  if (!hasHydrated) return null
